@@ -1,0 +1,19 @@
+{
+    "[python]": {
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        }
+    },
+    "ruff.enable": true,
+    "ruff.fixAll": true,
+    "ruff.lint.enable": true,
+    "ruff.nativeServer": "auto",
+    "ruff.showSyntaxErrors": true,
+    "ruff.importStrategy": "fromEnvironment",
+    "ruff.configuration": "./pyproject.toml",
+    "ruff.configurationPreference": "filesystemFirst"
+}
