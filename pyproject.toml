@@ -14,14 +14,11 @@ dependencies = [
     "fastapi>=0.100.0,<0.116.0",
     "starlette>=0.40.0,<0.47.0",
     "pydantic >=1.10.13,<3.0.0",
+    "pydantic-settings",
     "SQLAlchemy >=2.0.14,<2.1.0",
     "sqlmodel>=0.0.24,<0.1.0",
     "uvicorn"
 ]
-
-[project.optional-dependencies]
-dev = ["ruff==0.11.8", "mypy", "uvicorn[standard] >=0.12.0", "pre-commit"]
-test = ["pytest", "httpx"]
 
 [tool.ruff]
 # Tell to ruff if fix the violations

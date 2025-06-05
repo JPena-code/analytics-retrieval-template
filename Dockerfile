@@ -21,7 +21,7 @@ COPY ./src /opt/app/src
 COPY ./scripts /opt/scripts
 
 RUN chmod +x /opt/scripts/*
-RUN /opt/scripts/install.sh
+RUN /opt/scripts/setup.sh
 
 # ENTRYPOINT [ "./scripts/entrypoint.sh" ]
 CMD [ "/opt/scripts/entrypoint.sh" ]
