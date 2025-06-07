@@ -19,12 +19,6 @@ class Base(BaseModel):
     model_config = _CONFIG_MODEL
 
 
-class BaseCreateSchema(Base):
-    """Base schema for creation operations."""
-
-    pass
-
-
 class Response(Base, Generic[T], arbitrary_types_allowed=True):
     """Generic response model for API responses"""
 
