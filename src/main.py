@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 
+from .entrypoints import init_app
 from .routes import router
 
-app = FastAPI()
+app = FastAPI(license_info={"name": "MIT"}, lifespan=init_app)
 
 app.include_router(
     router,
