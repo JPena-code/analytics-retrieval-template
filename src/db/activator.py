@@ -1,5 +1,11 @@
+import logging
+
 import sqlalchemy.exc
 from sqlalchemy import Engine
+
+from .._logger import LOGGER_NAME
+
+LOGGER = logging.getLogger(LOGGER_NAME)
 
 
 def activate_ext(engine: Engine, ext: str):
@@ -18,8 +24,17 @@ def activate_ext(engine: Engine, ext: str):
             if name is None:
                 raise ValueError(f"Extension '{ext}' is not available in the database.")
 
-            trans.execute(sqlalchemy.text(f"CREATE EXTENSION IF NOT EXISTS {name} CASCADE"))
+            trans.execute(sqlalchemy.text(f'CREATE EXTENSION IF NOT EXISTS "{name}"'))
             trans.commit()
         except sqlalchemy.exc.SQLAlchemyError as e_sql:
+            LOGGER.fatal(
+                "Could not activate extension '%s' (%s) (%d) (%s)",
+                ext,
+                type(e_sql).__name__,
+                e_sql.code,
+                e_sql._message(),
+            )
             trans.rollback()
             raise e_sql
+        except ValueError:
+            LOGGER.error("Extension (%s) is not available in server")
