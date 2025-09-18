@@ -1,7 +1,7 @@
 from sqlalchemy import text
 
 CREATE_HYPERTABLE_INTERVAL = text("""
-SELECT create_hypertable(
+SELECT hypertable_id, created FROM create_hypertable(
     :table_name,
     by_range(:time_column, INTERVAL :chunk_time_interval),
     if_not_exists => :if_not_exists,
@@ -11,7 +11,7 @@ SELECT create_hypertable(
 
 
 CREATE_HYPERTABLE_INTEGER = text("""
-SELECT create_hypertable(
+SELECT hypertable_id, created FROM create_hypertable(
     :table_name,
     by_range(:time_column, :chunk_time_interval),
     if_not_exists => :if_not_exists,
