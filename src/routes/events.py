@@ -1,6 +1,7 @@
 from ipaddress import IPv4Address
 
-from fastapi import APIRouter, Request
+from fastapi import Request
+from fastapi.routing import APIRouter
 
 from ..schemas import EventCreate, EventSchema, Response
 
