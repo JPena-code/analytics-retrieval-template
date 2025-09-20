@@ -3,7 +3,7 @@ import logging
 import sqlalchemy.exc
 from sqlalchemy import Connection
 
-from .._logger import LOGGER_NAME
+from ..entrypoints.logger import LOGGER_NAME
 
 LOGGER = logging.getLogger(LOGGER_NAME)
 

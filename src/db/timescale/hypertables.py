@@ -4,7 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 from sqlalchemy.exc import SQLAlchemyError
 
-from ..._logger import LOGGER_NAME
+from ...entrypoints.logger import LOGGER_NAME
 from ...models import BaseTable
 from .. import statements as sql
 from .schemas import HyperTableSchema
