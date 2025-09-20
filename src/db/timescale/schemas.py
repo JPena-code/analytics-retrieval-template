@@ -11,10 +11,8 @@ class HyperParams(BaseModel, extra="forbid"):
 
     table_name: str
     time_column: str
-    time_interval: str | int
+    chunk_time_interval: str | int
     if_not_exists: bool
-    migrate_data: bool
-    drop_after: str | int
     migrate_data: bool
 
 

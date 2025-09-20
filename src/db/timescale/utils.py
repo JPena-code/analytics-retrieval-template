@@ -25,8 +25,7 @@ def extract_model_hyper_params(model: type[BaseTable]):
         {
             "table_name": getattr(model, "__tablename__", to_snake(model.__name__)),
             "time_column": getattr(model, "__time_column__", None),
-            "time_interval": time_interval,
-            "drop_after": getattr(model, "__drop_after__", None),
+            "chunk_time_interval": time_interval,
             "if_not_exists": True,
             "migrate_data": True,
         }
@@ -35,12 +34,18 @@ def extract_model_hyper_params(model: type[BaseTable]):
 
 def hypertable_sql(params: HyperParams):
     query = None
-    if isinstance(params.time_interval, str):
+    if isinstance(params.chunk_time_interval, str):
         query = sql.CREATE_HYPERTABLE_INTERVAL
-    elif isinstance(params.time_interval, int):
+    elif isinstance(params.chunk_time_interval, int):
         query = sql.CREATE_HYPERTABLE_INTEGER
     else:
         raise ValueError(
-            f"Invalid interval type for hypertable, got {type(params.time_interval).__name__}"
+            f"Invalid interval type for hypertable, got {type(params.chunk_time_interval).__name__}"
         )
-    return query.bindparams(**params.model_dump())
+    return str(
+        query.bindparams(**params.model_dump()).compile(
+            compile_kwargs={
+                "literal_binds": True,
+            }
+        )
+    )
