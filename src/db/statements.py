@@ -21,5 +21,12 @@ SELECT hypertable_id, created FROM create_hypertable(
 
 
 AVAILABLE_HYPERTABLES = text("""
-SELECT * FROM timescaledb_information.hypertables;
+SELECT hypertable_schema
+    ,hypertable_name
+    ,owner
+    ,num_dimensions
+    ,num_chunks
+    ,compression_enabled
+    ,tablespaces
+FROM timescaledb_information.hypertables;
 """)
