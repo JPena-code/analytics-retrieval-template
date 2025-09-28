@@ -2,7 +2,7 @@ from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Settings(BaseSettings):
+class _Settings(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=False,
         env_file=(".app.env",),
@@ -12,3 +12,6 @@ class Settings(BaseSettings):
 
     pg_dsn: PostgresDsn
     debug: bool = False
+
+
+Settings = _Settings()  # type: ignore
