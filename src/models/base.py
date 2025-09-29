@@ -28,7 +28,7 @@ class BaseHyperModel(SQLModel):
     time: datetime = Field(
         default_factory=get_utc_now,
         nullable=False,
-        sa_type=DateTime(timezone=True),
+        sa_type=DateTime(timezone=True),  # type: ignore
         primary_key=True,
     )
 

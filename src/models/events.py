@@ -9,6 +9,8 @@ from .base import BaseHyperModel
 
 
 class Event(BaseHyperModel, table=True):
+    __tablename__ = "events"  # type: ignore
+
     req_id: uuid.UUID = Field(sa_type=Uuid, default_factory=uuid.uuid4)
     page: Page
     agent: Annotated[str, StringConstraints(min_length=10)]
