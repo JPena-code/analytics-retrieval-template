@@ -32,7 +32,7 @@ def sync_hypertables(logger, conn: Connection):
             create_hypertable(conn, model)
         except SQLAlchemyError as e_sql:
             logger.error(
-                "Could not create hypertable for model %s (%s) (%d) (%s)",
+                "Could not create hypertable for model %s (%s) (%s) (%s)",
                 model.__name__,
                 type(e_sql).__name__,
                 e_sql.code,

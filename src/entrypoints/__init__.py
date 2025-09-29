@@ -11,6 +11,5 @@ __all__ = ["init_app", "get_session"]
 @asynccontextmanager
 async def init_app(app: FastAPI):
     init_loggers()
-    print(get_logger())
     init_db(get_logger())
     yield {"logger": get_logger()}
