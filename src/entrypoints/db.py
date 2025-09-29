@@ -26,12 +26,12 @@ def init_db(logger):
         try:
             logger.info("Creating base schema %s", models.SCHEMA)
             conn.execute(CreateSchema(models.SCHEMA, if_not_exists=True))
-            logger.debug('Creating extensions in database ["timescaledb", "uuid-ossp"')
+            logger.debug('Creating extensions in database ["timescaledb", "uuid-ossp"]')
             activate_ext(conn, "timescaledb")
             activate_ext(conn, "uuid-ossp")
 
             logger.info("Creating/Updating table models")
-            SQLModel.metadata.create_all(conn, checkfirst=True)
+            SQLModel.metadata.create_all(conn)
             sync_hypertables(logger, conn)
         except SQLAlchemyError as e_sql:
             logger.error(
@@ -40,11 +40,9 @@ def init_db(logger):
                 e_sql.code,
                 e_sql._message(),
             )
-            conn.rollback()
             raise e_sql
         except:
             logger.exception("Unexpected error encounter init_db")
-            conn.rollback()
             raise
 
 
