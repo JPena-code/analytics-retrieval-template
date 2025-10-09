@@ -3,6 +3,8 @@ from ipaddress import IPv4Address
 from fastapi import Request
 from fastapi.routing import APIRouter
 
+from depends import Session
+
 from ..schemas import EventCreate, EventSchema, Response
 
 router = APIRouter(tags=["events"])
@@ -36,6 +38,25 @@ def read_events(req: Request):
     )
 
 
+@router.get(
+    "/{event_id}",
+    response_model_by_alias=True,
+    response_model_exclude_none=True,
+    response_model=Response[EventSchema],
+)
+def find_event(request: Request, event_id: int):
+    return Response(
+        data=EventSchema(
+            id=1,
+            path="/dummy/path",
+            agent="dummy-agent",
+            ip_address=IPv4Address("127.0.0.1"),
+            session_id="dummy-session",
+        ),
+        req=request,
+    )
+
+
 @router.post("/", response_model=Response[EventSchema], response_model_by_alias=True)
-def create_event(req: Request, payload: EventCreate):
+def create_event(req: Request, session: Session, payload: EventCreate):
     return Response[EventSchema](**{"req": req, "data": EventSchema(**payload.model_dump(), id=1)})
