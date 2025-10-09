@@ -3,13 +3,13 @@ from sqlalchemy.schema import CreateSchema
 from sqlmodel import SQLModel, Session
 
 from .. import models
+from ..config import environments
 from ..db import activate_ext, create_engine, sync_hypertables
-from ..settings import Settings
 
 __engine = create_engine(
-    Settings.pg_dsn.encoded_string(),
+    environments.pg_dsn.encoded_string(),
     echo=True,
-    echo_pool=Settings.debug,
+    echo_pool=environments.debug,
     pool_size=100,
     pool_recycle=3600,
     pool_timeout=30,

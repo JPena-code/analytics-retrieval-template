@@ -6,7 +6,7 @@ from typing import Literal
 
 from typing_extensions import override
 
-from ..settings import Settings
+from ..config import environments
 
 _LOGGER_NAME = "fast-analytics"
 
@@ -106,6 +106,7 @@ class JsonFormatter(logging.Formatter):
         return json.dumps(dict_record, default=str)
 
     def __prepare_record(self, record: logging.LogRecord) -> dict:
+        _record = record.__dict__
         created = datetime.fromtimestamp(record.created, timezone.utc)
         dict_record = {
             "level": record.levelname,
@@ -115,12 +116,17 @@ class JsonFormatter(logging.Formatter):
             "msg": record.getMessage(),
         }
         if record.exc_info:
-            dict_record["exec_info"] = self.formatException(record.exc_info)
+            dict_record["exception"] = self.formatException(record.exc_info)
         if record.stack_info:
-            dict_record["stack_info"] = self.formatStack(record.stack_info)
+            dict_record["stack"] = self.formatStack(record.stack_info)
 
         for key, value in self._fmt_json.items():
-            dict_record[key] = getattr(record, value)
+            dict_record[key] = _record.get(value, "Attr not found")
+
+        if extra := _record.get("request", None):
+            dict_record["request"] = extra
+        if extra := _record.get("response", None):
+            dict_record["response"] = extra
 
         return dict_record
 
@@ -128,10 +134,10 @@ class JsonFormatter(logging.Formatter):
 def init_loggers():
     logging.config.dictConfig(LOGGING_CONFIG)
     for logger in logging.root.manager.loggerDict:
-        logging.getLogger(logger).setLevel(logging.DEBUG if Settings.debug else logging.INFO)
+        logging.getLogger(logger).setLevel(logging.DEBUG if environments.debug else logging.INFO)
 
 
 def get_logger():
-    if Settings.debug:
+    if environments.debug:
         return logging.getLogger(_DEBUG_LOGGER)
     return logging.getLogger(_LOGGER_NAME)
