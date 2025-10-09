@@ -25,6 +25,7 @@
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+  - [Development](#development)
 - [API Endpoints](#api-endpoints)
   - [Base URL](#base-url)
   - [Example Endpoints](#example-endpoints)
@@ -93,6 +94,19 @@ This project was inspired by the concepts and techniques demonstrated in [this v
    ```
 
 ---
+
+### Development
+
+To run the project locally for development purposes, follow these steps:
+
+1. **Set up a Python virtual environment** (recommended):
+
+  ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   uvicorn src.main:app --reload
+  ```
 
 ## API Endpoints
 
