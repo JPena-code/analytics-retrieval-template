@@ -50,7 +50,7 @@ def get_session():
     """Get the a new session connected to the database"""
     if __engine is None:
         raise RuntimeError(
-            "Database engine is not initialized yet... `init_db` must be called first "
+            "Database engine is not initialized yet... "
             + "at the leve of lifespan of the application"
         )
     # TODO: should we use a sessionmaker here?

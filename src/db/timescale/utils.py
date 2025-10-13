@@ -8,7 +8,7 @@ from .. import statements as sql
 from .schemas import HyperParams
 
 
-def extract_model_hyper_params(model: type[BaseTable]):
+def extract_model_hyper_params(model: "type[BaseTable]"):
     time_interval = getattr(model, "__time_interval__", None)
     if time_interval is None:
         raise ValueError("Model must define a __time_interval__ attribute")
@@ -27,10 +27,10 @@ def extract_model_hyper_params(model: type[BaseTable]):
         "__table__",
         Table(
             to_snake(model.__name__),
-            schema="public",
-            metadata=MetaData(
+            MetaData(
                 schema="public",
             ),
+            schema="public",
         ),
     )
 
