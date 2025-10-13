@@ -1,22 +1,23 @@
+import uuid
 from datetime import datetime
 from typing import Annotated
 
 from pydantic import AnyHttpUrl, Field, IPvAnyAddress, NonNegativeFloat
 from pydantic.types import StringConstraints
+from src._types import Page
+from src.utils import get_utc_now
 
-from .._types import Page
-from ..utils import get_utc_now
 from ._base import Base
 
 
 class EventCreate(Base):
     """Schema for the creation of a new event. i.e. POST /events"""
 
-    path: Page
+    page: Page
     agent: Annotated[str, StringConstraints(min_length=10)]
     ip_address: IPvAnyAddress
     referrer: Annotated[AnyHttpUrl | None, Field(None)] = None
-    session_id: str | None
+    session_id: uuid.UUID
     duration: NonNegativeFloat = 0
 
 
