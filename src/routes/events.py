@@ -1,40 +1,37 @@
 from ipaddress import IPv4Address
 
-from fastapi import Request
+from fastapi import HTTPException, Request
 from fastapi.routing import APIRouter
+from sqlalchemy.exc import SQLAlchemyError
+from sqlmodel import select
 
-from depends import Session
+from config import constants
+from depends import PageQuery, Session
+from schemas import EventCreate, EventSchema, Page, Response, ResponsePage, StatusEnum
 
-from ..schemas import EventCreate, EventSchema, Response
+from ..models import Event
 
 router = APIRouter(tags=["events"])
 
 
 @router.get(
-    "/",
+    "",
     response_model_by_alias=True,
     response_model_exclude_none=True,
-    response_model=Response[EventSchema],
+    response_model=ResponsePage[EventSchema],
 )
-def read_events(req: Request):
-    return Response[EventSchema](
-        data=[
-            EventSchema(
-                id=1,
-                path="/dummy/path",
-                agent="dummy-agent",
-                ip_address=IPv4Address("127.0.0.1"),
-                session_id="dummy-session",
-            ),
-            EventSchema(
-                id=2,
-                path="/dummy/path/2",
-                agent="dummy-agent-2",
-                ip_address=IPv4Address("172.0.0.1"),
-                session_id="dummy-session-2",
-            ),
-        ],
-        req=req,
+def read_events(request: Request, session: Session, page: PageQuery):
+    events = session.exec(select(Event)).all()
+    return ResponsePage(
+        results=events,
+        request=request,
+        status=StatusEnum.success,
+        message="Successfully retrieved the model #Events",
+        total_records=len(events),
+        # TODO: passing the actual page query object gives a
+        # pydantic validation error indicating that the field is not
+        # a valid Page instance
+        page=Page.model_validate(page.model_dump()),
     )
 
 
@@ -46,17 +43,53 @@ def read_events(req: Request):
 )
 def find_event(request: Request, event_id: int):
     return Response(
-        data=EventSchema(
+        result=EventSchema(
             id=1,
-            path="/dummy/path",
+            page="/dummy/path",
             agent="dummy-agent",
             ip_address=IPv4Address("127.0.0.1"),
-            session_id="dummy-session",
+            session_id="7e10c4b8-f9f7-4073-98a7-b6056c3d0cd6",
         ),
-        req=request,
+        request=request,
+        status=StatusEnum.success,
+        message="Processed successfully",
     )
 
 
-@router.post("/", response_model=Response[EventSchema], response_model_by_alias=True)
-def create_event(req: Request, session: Session, payload: EventCreate):
-    return Response[EventSchema](**{"req": req, "data": EventSchema(**payload.model_dump(), id=1)})
+@router.post(
+    "",
+    response_model=Response[EventSchema],
+    response_model_by_alias=True,
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
+    name="Create single event",
+)
+def create_event(request: Request, session: Session, payload: EventCreate):
+    raw_obj = payload.model_dump()
+    raw_obj["referrer"] = str(raw_obj["referrer"]) if raw_obj["referrer"] else None
+    db_obj = Event.model_validate(raw_obj)
+    try:
+        session.add(db_obj)
+        session.commit()
+        session.refresh(db_obj)
+    except SQLAlchemyError as e_sql:
+        session.rollback()
+        request.state.logger.exception(
+            "Database error: processing request %s",
+            request.headers.get(constants.REQ_ID_HEADER),
+            exc_info=e_sql,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=Response(
+                request=request,
+                status=StatusEnum.error,
+                message="Internal server error",
+            ).model_dump(exclude_none=True, exclude_unset=True),
+        ) from None
+    return Response(
+        result=db_obj,
+        request=request,
+        status=StatusEnum.success,
+        message="Event created successfully",
+    )
