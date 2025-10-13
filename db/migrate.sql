@@ -13,10 +13,9 @@ BEGIN;
     CREATE TABLE analytics.events (
         id SERIAL NOT NULL,
         time TIMESTAMPTZ WITH TIME ZONE NOT NULL DEFAULT NOW()
-        req_id UUID NOT NULL,
         page VARCHAR(256) NOT NULL,
-        agent VARCHAR( NOT NULL,
-        ip_address BIGINT NOT NULL,
+        agent VARCHAR NOT NULL,
+        ip_address INET NOT NULL,
         referrer VARCHAR,
         session_id VARCHAR,
         duration FLOAT NOT NULL,
