@@ -206,6 +206,7 @@ print(response.json())
 
 - **Authentication**: Implement OAuth2 for secure access.
 - **Pagination**: Add pagination for large datasets.
+- **Custom Error**: Define a custom schema of errors to notify when something goes wrong
 - **GraphQL Support**: Explore GraphQL for flexible queries.
 - **CI/CD Integration**: Automate testing and deployment.
 
