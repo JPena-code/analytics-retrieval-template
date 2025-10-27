@@ -19,7 +19,7 @@ class BaseHyperModel(SQLModel):
 
     __table_args__ = {"schema": SCHEMA}
 
-    id: int = Field(
+    id: int | None = Field(
         default=None,
         primary_key=True,
         sa_column_kwargs={"autoincrement": True},
