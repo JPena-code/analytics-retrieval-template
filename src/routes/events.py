@@ -1,6 +1,4 @@
-from ipaddress import IPv4Address
-
-from fastapi import HTTPException, Request
+from fastapi import HTTPException, Request, status
 from fastapi.routing import APIRouter
 from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import select
@@ -37,19 +35,24 @@ def read_events(request: Request, session: Session, page: PageQuery):
 
 @router.get(
     "/{event_id}",
+    status_code=status.HTTP_200_OK,
     response_model_by_alias=True,
     response_model_exclude_none=True,
     response_model=Response[EventSchema],
 )
-def find_event(request: Request, event_id: int):
+def find_event(request: Request, session: Session, event_id: int):
+    event = session.exec(select(Event).where(Event.id == event_id)).first()
+    if not event:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=Response(
+                request=request,
+                status=StatusEnum.error,
+                message=f"Event with id {event_id} not found",
+            ),
+        )
     return Response(
-        result=EventSchema(
-            id=1,
-            page="/dummy/path",
-            agent="dummy-agent",
-            ip_address=IPv4Address("127.0.0.1"),
-            session_id="7e10c4b8-f9f7-4073-98a7-b6056c3d0cd6",
-        ),
+        result=event,
         request=request,
         status=StatusEnum.success,
         message="Processed successfully",
@@ -58,6 +61,7 @@ def find_event(request: Request, event_id: int):
 
 @router.post(
     "",
+    status_code=status.HTTP_201_CREATED,
     response_model=Response[EventSchema],
     response_model_by_alias=True,
     response_model_exclude_none=True,
