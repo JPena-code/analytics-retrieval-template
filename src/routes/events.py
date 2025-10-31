@@ -5,9 +5,8 @@ from sqlmodel import select
 
 from config import constants
 from depends import PageQuery, Session
+from models import Event
 from schemas import EventCreate, EventSchema, Page, Response, ResponsePage, StatusEnum
-
-from ..models import Event
 
 router = APIRouter(tags=["events"])
 

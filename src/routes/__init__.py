@@ -1,12 +1,12 @@
 from fastapi.routing import APIRouter
 
-from .events import router as events_router
+from . import events
 
 __version__ = "1.0"
 VERSION = f"v{__version__}"
 
 router = APIRouter(prefix=f"/api/{VERSION}")
 
-router.include_router(events_router, prefix="/events", tags=["events", VERSION])
+router.include_router(events.router, prefix="/events", tags=["events", VERSION])
 
 __all__ = ["router"]

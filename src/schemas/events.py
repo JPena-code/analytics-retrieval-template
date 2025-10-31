@@ -13,7 +13,7 @@ from ._base import Base
 class EventCreate(Base):
     """Schema for the creation of a new event. i.e. POST /events"""
 
-    page: Page
+    page: Page = Field(examples=["/hone", "/products"])
     agent: Annotated[str, StringConstraints(min_length=10)]
     ip_address: IPvAnyAddress
     referrer: Annotated[AnyHttpUrl | None, Field(None)] = None

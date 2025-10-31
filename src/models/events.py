@@ -6,7 +6,8 @@ from sqlalchemy import Index
 from sqlalchemy.dialects.postgresql import INET, TEXT
 from sqlmodel import Field, Uuid, desc
 
-from .._types import Page
+from _types import Page
+
 from .base import BaseHyperModel
 
 

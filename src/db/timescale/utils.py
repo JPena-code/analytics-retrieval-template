@@ -1,11 +1,14 @@
 from datetime import timedelta
+from typing import TYPE_CHECKING
 
 from pydantic.alias_generators import to_snake
 from sqlalchemy import MetaData, Table
 
-from ...models import BaseTable
 from .. import statements as sql
 from .schemas import HyperParams
+
+if TYPE_CHECKING:
+    from models import BaseTable
 
 
 def extract_model_hyper_params(model: "type[BaseTable]"):
