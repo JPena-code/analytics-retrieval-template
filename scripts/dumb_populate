@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+
+set -eu
+
+PAGES=("/home" "/FAQ" "/about" "/blog" "/contact")
+
+USER_AGENTS=(
+    # Navegadores modernos
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_2_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15"
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"
+
+    # Navegadores antiguos (útiles para pruebas)
+    "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko"                 # Internet Explorer 11
+    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36"
+
+    # Móviles: Android
+    "Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"
+    "Mozilla/5.0 (Linux; Android 11; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/17.0 Chrome/96.0.4664.45 Mobile Safari/537.36"
+
+    # Móviles: iOS
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Mobile/15E148 Safari/604.1"
+    "Mozilla/5.0 (iPad; CPU OS 16_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.7 Mobile/15E148 Safari/604.1"
+
+    # Tablets Android
+    "Mozilla/5.0 (Linux; Android 13; Lenovo TB-J706F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+    # Bots y crawlers
+    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+    "Mozilla/5.0 (compatible; Bingbot/2.0; +http://www.bing.com/bingbot.htm)"
+    "Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)"
+    "DuckDuckBot/1.1; (+http://duckduckgo.com/duckduckbot.html)"
+
+    # Herramientas CLI
+    "curl/8.5.0"
+    "Wget/1.21.4 (linux-gnu)"
+    "HTTPie/3.2.2"
+    "python-httpx/0.28.1"
+
+    # Apps / servicios
+    "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"
+    "Twitterbot/1.0"
+)
+
+usage() { echo "Usage $0 [-r <string>] [-p <int>] NUM_RECORDS" 1>&2; exit 1; }
+
+check_deps()
+{
+    if ! which curl > /dev/null; then
+        echo "curl is not installed. Installed it and try again."
+        exit 1;
+    fi
+}
+
+health_check()
+{
+    local url=$1
+    local code
+    echo "$url in health_check"
+    code="$(curl -sI -o /dev/null -w "%{http_code}" "$url")"
+
+    if [[ $code != "200" ]]; then
+        echo "The service is not running the $url endpoint"
+        exit 1
+    fi
+
+}
+
+random_bytes()
+{
+    local bytes=$1
+    od -N "$bytes" -t dL -An /dev/urandom | tr -d ' '
+}
+
+
+gen_ip()
+{
+    printf "%d.%d.%d.%d" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))"
+}
+
+payload()
+{
+    local agent=${USER_AGENTS[$RANDOM % ${#USER_AGENTS[@]}]}
+    local page=${PAGES[$RANDOM % ${#PAGES[@]}]}
+    echo "{\"page\": \"$page\",\"agent\": \"$agent\",\"ip_address\": \"$(gen_ip)\",\"session_id\": \"$(uuidgen)\",\"duration\": $(random_bytes 2)}"
+}
+
+main()
+{
+    # Checking if dependencies are installed
+    # in user machine
+    check_deps
+
+    local HOST="http://localhost"
+    local PORT="8000"
+    while getopts ":r:p:" arg; do
+        case "$arg" in
+            r)
+                HOST="$OPTARG"
+            ;;
+            p)
+                PORT="$OPTARG"
+            ;;
+            *)
+                usage
+            ;;
+        esac
+    done
+
+    shift $(( OPTIND - 1))
+    if [[ "$#" -eq 0 ]]; then
+        usage
+    fi
+
+    local EVENTS=$1
+    local BASE_URL="$HOST:$PORT"
+
+    health_check "$BASE_URL/healthzcheck"
+    echo "Creating $EVENTS dummy events through api requests"
+
+    local i
+    local new_payload
+    for i in $(seq 1 "$EVENTS"); do
+        new_payload=$(payload)
+        curl -s -X "POST" \
+            -o /dev/null \
+            "$BASE_URL/api/v1.0/events" \
+            -H "accept: application/json" \
+            -H "content-type: application/json" \
+            -d "$new_payload" &
+
+        if [[ $(( i % 5 )) -eq 0 ]]; then
+            # In case of there is a rete limiter
+            sleep 1
+        fi;
+    done
+    echo "Events created successfully"
+}
+
+main "$@"
