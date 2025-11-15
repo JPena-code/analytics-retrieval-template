@@ -17,8 +17,12 @@ dependencies = [
     "pydantic-settings",
     "SQLAlchemy >=2.0.14,<2.1.0",
     "sqlmodel>=0.0.24,<0.1.0",
+    # INFO: pyzt is part of the Tidelift package and has support for
+    # Enterprise by a subscription
+    "pytz",
     "uvicorn",
-    "psycopg[binary]",            # Postgres driver... in production as recommended in documentation install psycopg[c]
+    # Postgres driver... in production as recommended in documentation install psycopg[c]
+    "psycopg[binary]",
 ]
 
 [tool.ruff]
