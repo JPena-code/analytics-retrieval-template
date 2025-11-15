@@ -55,8 +55,8 @@ class ResponsePage(_Envelope, Generic[_TModel]):
     """Generic response model for API responses with pagination"""
 
     results: Sequence[_TModel] | None = None
-    total_records: _ExcludedNonNegativeInt
-    page: Page
+    total_records: _ExcludedNonNegativeInt = Field(default=0)
+    page: Annotated[Page, Field(exclude=True)]
 
     @model_validator(mode="after")
     def validate_meta(self):

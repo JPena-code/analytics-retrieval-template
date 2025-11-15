@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Any
 
 from pydantic import AnyHttpUrl, Field, IPvAnyAddress, NonNegativeFloat
 from pydantic.types import StringConstraints
@@ -8,6 +8,15 @@ from src._types import Page
 from src.utils import get_utc_now
 
 from ._base import Base
+
+
+class EventAggregate(Base):
+    field: Any
+    interval: datetime
+    count: int
+    avg_duration: NonNegativeFloat | None = None
+    min_duration: NonNegativeFloat | None = None
+    max_duration: NonNegativeFloat | None = None
 
 
 class EventCreate(Base):

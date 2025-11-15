@@ -7,6 +7,6 @@ VERSION = f"v{__version__}"
 
 router = APIRouter(prefix=f"/api/{VERSION}")
 
-router.include_router(events.router, prefix="/events", tags=["events", VERSION])
+router.include_router(events.router, prefix="/event", tags=["events", VERSION])
 
 __all__ = ["router"]

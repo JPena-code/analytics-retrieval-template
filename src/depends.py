@@ -5,6 +5,12 @@ from sqlmodel import Session as SqlSession
 from src.entrypoints import get_session
 from src.schemas import Page
 
+from schemas.queries import PageAggregate
+
 Session = Annotated[SqlSession, Depends(get_session)]
 
 PageQuery = Annotated[Page, Query()]
+PageQueryAgg = Annotated[
+    PageAggregate,
+    Query(description="Pagination with aggregation over a time interval"),
+]
