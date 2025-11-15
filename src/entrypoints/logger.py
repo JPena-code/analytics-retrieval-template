@@ -127,6 +127,8 @@ class JsonFormatter(logging.Formatter):
             dict_record["request"] = extra
         if extra := _record.get("response", None):
             dict_record["response"] = extra
+        if extra := _record.get("sql_query", None):
+            dict_record["sql_query"] = extra
 
         return dict_record
 
