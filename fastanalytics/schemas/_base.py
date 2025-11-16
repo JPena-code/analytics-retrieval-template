@@ -13,7 +13,7 @@ class Base(BaseModel):
     model_config = _CONFIG_MODEL
 
     @classmethod
-    def field_by_alias(cls, field_alias):
+    def field_by_alias(cls, field_alias: str) -> str | None:
         """Get a field by its alias name, if not found return None"""
         for field_name, field_info in cls.model_fields.items():
             if field_info.serialization_alias == field_alias:
@@ -21,7 +21,7 @@ class Base(BaseModel):
         return None
 
     @classmethod
-    def numeric_fields(cls):
+    def numeric_fields(cls) -> list[str]:
         """Get a list of numeric fields in the model"""
         return [
             field_name

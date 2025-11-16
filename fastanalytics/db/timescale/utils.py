@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from pydantic.alias_generators import to_snake
 from sqlalchemy import MetaData, Table
 
-from .. import statements as sql
+from . import statements as sql
 from .schemas import HyperParams
 
 if TYPE_CHECKING:

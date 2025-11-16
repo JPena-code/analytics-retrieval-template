@@ -2,9 +2,8 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 from sqlalchemy.exc import SQLAlchemyError
 
-from db import statements as sql
-from models import BaseTable
-
+from ...models import BaseTable
+from . import statements as sql
 from .schemas import HyperTableSchema
 from .utils import extract_model_hyper_params, hypertable_sql
 

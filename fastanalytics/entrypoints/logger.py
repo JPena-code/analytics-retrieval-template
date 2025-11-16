@@ -41,7 +41,7 @@ LOGGING_CONFIG = {
     "disable_existing_loggers": False,
     "formatters": {
         "json": {
-            "()": "src.entrypoints.logger.JsonFormatter",
+            "()": "fastanalytics.entrypoints.logger.JsonFormatter",
             "fmt_json": {
                 "level": "levelname",
                 "logger": "name",

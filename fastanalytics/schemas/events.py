@@ -4,9 +4,9 @@ from typing import Annotated, Any
 
 from pydantic import AnyHttpUrl, Field, IPvAnyAddress, NonNegativeFloat
 from pydantic.types import StringConstraints
-from src._types import Page
-from src.utils import get_utc_now
 
+from .._types import Page
+from ..utils import get_utc_now
 from ._base import Base
 
 

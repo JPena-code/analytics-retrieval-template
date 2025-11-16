@@ -8,10 +8,9 @@ from .utils import orm_table_name
 if TYPE_CHECKING:
     from datetime import datetime
 
+    from models.base import BaseHyperModel
     from sqlalchemy.orm import Mapped
     from sqlalchemy.sql.functions import Function
-
-    from models.base import BaseHyperModel
 
 
 def approximate_row_count(model: "type[BaseHyperModel]") -> "Function[int]":

@@ -6,9 +6,8 @@ from typing import Annotated, Generic, TypeVar
 from fastapi import Request
 from pydantic import BaseModel, Field, NonNegativeInt, model_validator
 
-from schemas.queries import Page, PageMetaData
-
 from ._base import Base
+from .queries import Page, PageMetaData
 
 _TModel = TypeVar("_TModel", bound=BaseModel)
 _ExcludedStatus = Annotated["StatusEnum", Field(exclude=True)]

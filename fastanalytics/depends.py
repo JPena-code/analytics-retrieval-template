@@ -2,10 +2,10 @@ from typing import Annotated
 
 from fastapi import Depends, Query
 from sqlmodel import Session as SqlSession
-from src.entrypoints import get_session
-from src.schemas import Page
 
-from schemas.queries import PageAggregate
+from .entrypoints import get_session
+from .schemas import Page
+from .schemas.queries import PageAggregate
 
 Session = Annotated[SqlSession, Depends(get_session)]
 

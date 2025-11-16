@@ -3,14 +3,20 @@ from fastapi.routing import APIRouter
 from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import col, func, select
 
-from config import constants
-from db import approximate_row_count
-from db.timescale.functions import time_bucket
-from depends import PageQuery, PageQueryAgg, Session
-from models import Event
-from models.utils import is_numeric
-from schemas import EventCreate, EventSchema, Page, Response, ResponsePage, StatusEnum
-from schemas.events import EventAggregate
+from ..config import constants
+from ..db import approximate_row_count
+from ..db.timescale.functions import time_bucket
+from ..depends import PageQuery, PageQueryAgg, Session
+from ..models import Event, is_numeric
+from ..schemas import (
+    EventAggregate,
+    EventCreate,
+    EventSchema,
+    Page,
+    Response,
+    ResponsePage,
+    StatusEnum,
+)
 
 router = APIRouter(tags=["events"])
 

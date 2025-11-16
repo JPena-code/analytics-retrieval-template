@@ -4,7 +4,7 @@ from typing import ClassVar
 from pydantic import field_validator
 from sqlmodel import DateTime, Field, SQLModel
 
-from utils import get_utc_now
+from ..utils import get_utc_now
 
 SCHEMA = "analytics"
 
