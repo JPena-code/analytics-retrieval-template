@@ -14,15 +14,16 @@ if TYPE_CHECKING:
 
     from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-    THasHeaders: TypeAlias = "Scope" | "Message"
+    THasHeaders: TypeAlias = Scope | Message
+    TASGILoggerInfo: TypeAlias = dict[str, str | dict[str, str]]
 
 
-def _copy_headers(asgi: "THasHeaders"):
+def _copy_headers(asgi: "THasHeaders") -> dict[str, str]:
     headers = copy.deepcopy(asgi["headers"])
     return {key.decode("latin1"): value.decode("latin1") for key, value in headers}
 
 
-def _extract_req_info(scope: "Scope"):
+def _extract_req_info(scope: "Scope") -> "TASGILoggerInfo":
     url = URL(scope=scope)
     return {
         "http": f"{scope['scheme'].upper()}/{scope['http_version']}",
@@ -34,7 +35,7 @@ def _extract_req_info(scope: "Scope"):
     }
 
 
-def _extract_res_info(message: "Message"):
+def _extract_res_info(message: "Message") -> "TASGILoggerInfo":
     return {
         "status_code": message["status"],
         "phrase": HTTPStatus(message["status"]).phrase,
@@ -53,7 +54,7 @@ class MessageLoggerMiddleware:
         self.logger = logger
 
     async def __call__(self, scope: "Scope", receive: "Receive", send: "Send") -> None:
-        async def logger_send(message: "Message"):
+        async def logger_send(message: "Message") -> None:
             if message["type"] == "http.response.start":
                 headers = MutableHeaders(raw=message["headers"])
                 headers.append(

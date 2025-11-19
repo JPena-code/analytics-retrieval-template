@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,8 +9,11 @@ from . import statements as sql
 from .schemas import HyperTableSchema
 from .utils import extract_model_hyper_params, hypertable_sql
 
+if TYPE_CHECKING:
+    import logging
 
-def sync_hypertables(logger, conn: Connection):
+
+def sync_hypertables(logger: "logging.Logger", conn: Connection) -> None:
     """Synchronize all tables associated with a model to be an hypertable in the database"""
     models = [
         model
@@ -41,7 +46,7 @@ def sync_hypertables(logger, conn: Connection):
             raise e_sql
 
 
-def create_hypertable(conn: Connection, model: type[BaseTable]):
+def create_hypertable(conn: Connection, model: type[BaseTable]) -> None:
     """Create a hypertable for a given model, the associated table must exists in the database."""
     if model is None:
         raise ValueError("Model is required, cannot be None")
@@ -52,9 +57,10 @@ def create_hypertable(conn: Connection, model: type[BaseTable]):
     conn.execute(text(statement))
 
 
-def hypertables(conn: Connection):
+def hypertables(conn: Connection) -> list[HyperTableSchema]:
     """Fetch all the hypertables in the database"""
-    tables = []
-    tables = conn.execute(sql.AVAILABLE_HYPERTABLES).all()
-    tables = [HyperTableSchema.model_validate(table._asdict()) for table in tables]
+    tables = [
+        HyperTableSchema.model_validate(table._asdict())
+        for table in conn.execute(sql.AVAILABLE_HYPERTABLES).all()
+    ]
     return tables

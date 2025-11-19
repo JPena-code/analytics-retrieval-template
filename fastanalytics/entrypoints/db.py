@@ -1,3 +1,6 @@
+from collections.abc import Generator
+from typing import TYPE_CHECKING
+
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.schema import CreateSchema
 from sqlmodel import SQLModel, Session
@@ -5,6 +8,9 @@ from sqlmodel import SQLModel, Session
 from .. import models
 from ..config import environments
 from ..db import activate_ext, create_engine, sync_hypertables
+
+if TYPE_CHECKING:
+    import logging
 
 __engine = create_engine(
     environments.pg_dsn.encoded_string(),
@@ -16,7 +22,7 @@ __engine = create_engine(
 )
 
 
-def init_db(logger):
+def init_db(logger: "logging.Logger") -> None:
     """Initialize the database connection and the related setup
     In a lifespan cycle for the application
     """
@@ -46,7 +52,7 @@ def init_db(logger):
             raise
 
 
-def get_session():
+def get_session() -> Generator[Session, None, None]:
     """Get the a new session connected to the database"""
     if __engine is None:
         raise RuntimeError(

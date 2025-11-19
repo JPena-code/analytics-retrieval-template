@@ -17,7 +17,7 @@ app.include_router(
 
 
 @app.api_route("/healthzcheck", methods=["GET", "HEAD"], status_code=status.HTTP_200_OK)
-def health_check(request: Request):
+def health_check(request: Request) -> dict[str, str]:
     """Health check endpoint for the API."""
     # TODO: Implement a proper health check that can retrieve
     # the status of the database and the usage of the service itself.

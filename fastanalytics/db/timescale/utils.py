@@ -8,10 +8,10 @@ from . import statements as sql
 from .schemas import HyperParams
 
 if TYPE_CHECKING:
-    from models import BaseTable
+    from ...models import BaseTable
 
 
-def extract_model_hyper_params(model: "type[BaseTable]"):
+def extract_model_hyper_params(model: "type[BaseTable]") -> "HyperParams":
     time_interval = getattr(model, "__time_interval__", None)
     if time_interval is None:
         raise ValueError("Model must define a __time_interval__ attribute")
@@ -38,7 +38,7 @@ def extract_model_hyper_params(model: "type[BaseTable]"):
     )
 
 
-def orm_table_name(model: "type[BaseTable]"):
+def orm_table_name(model: "type[BaseTable]") -> "str":
     metadata = getattr(
         model,
         "__table__",
@@ -57,7 +57,7 @@ def orm_table_name(model: "type[BaseTable]"):
     return table_name
 
 
-def hypertable_sql(params: HyperParams):
+def hypertable_sql(params: HyperParams) -> "str":
     query = None
     if isinstance(params.chunk_time_interval, str):
         query = sql.CREATE_HYPERTABLE_INTERVAL

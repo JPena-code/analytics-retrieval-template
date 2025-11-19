@@ -2,7 +2,7 @@ import sqlalchemy
 from sqlalchemy import Connection
 
 
-def activate_ext(conn: Connection, ext: str):
+def activate_ext(conn: Connection, ext: str) -> None:
     """Activate an extension in the database.
     Args:
         conn (Connection): `sqlalchemy.Connection` connection to the database

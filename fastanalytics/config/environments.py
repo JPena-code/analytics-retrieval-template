@@ -14,4 +14,4 @@ class _Settings(BaseSettings):
     debug: bool = False
 
 
-Settings = _Settings()  # type: ignore
+Settings = _Settings()

@@ -1,3 +1,7 @@
+# mypy: disable-error-code=no-untyped-def
+
+from typing import TYPE_CHECKING
+
 from fastapi import HTTPException, Request, status
 from fastapi.routing import APIRouter
 from sqlalchemy.exc import SQLAlchemyError
@@ -17,6 +21,11 @@ from ..schemas import (
     ResponsePage,
     StatusEnum,
 )
+
+if TYPE_CHECKING:
+    from typing import Any
+
+    from sqlalchemy.sql import SQLColumnExpression
 
 router = APIRouter(tags=["events"])
 
@@ -109,7 +118,7 @@ def agg_events(
     offset = (page.page - 1) * limit
 
     bucket_interval = time_bucket(page.interval, col(Event.time)).label("interval")
-    columns = [
+    columns: list[SQLColumnExpression[Any]] = [
         bucket_interval,
         col_field.label("field"),
         func.count(col_field).label("count"),

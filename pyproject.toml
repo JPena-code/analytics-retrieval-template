@@ -25,6 +25,21 @@ dependencies = [
     "psycopg[binary]",
 ]
 
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+strict = true
+# Routes to  from exclude to mypy checks
+exclude = [
+    ".*/routes/.*\\.py$",
+]
+# follow_imports = "silent"
+implicit_optional = true
+install_types = true
+
+[[tool.mypy.overrides]]
+module = "fastanalytics.routes.*"
+disallow_untyped_defs = false
+
 [tool.ruff]
 # Tell to ruff if fix the violations
 fix = true
@@ -47,8 +62,7 @@ quote-style = "double"
 
 [tool.ruff.lint]
 # Logger objects that should be treated as "logger"
-# TODO: For define
-logger-objects = []
+logger-objects = ["request.state.logger"]
 # List of rules to enable
 select = [
     "E",  # pycodestyle errors

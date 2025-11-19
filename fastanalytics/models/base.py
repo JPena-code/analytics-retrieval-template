@@ -34,7 +34,7 @@ class BaseHyperModel(SQLModel):
 
     @field_validator("time", mode="after")
     @classmethod
-    def has_timezone(cls, value: datetime):
+    def has_timezone(cls, value: datetime) -> datetime:
         if value.tzinfo is None or value.tzinfo.utcoffset(value) is None:
             value = value.replace(tzinfo=timezone.utc)
         return value

@@ -1,3 +1,4 @@
+# mypy : disable-erro-code=arg-type
 from typing import TYPE_CHECKING
 
 import pytz
@@ -7,10 +8,12 @@ from .utils import orm_table_name
 
 if TYPE_CHECKING:
     from datetime import datetime
+    from typing import Any
 
-    from models.base import BaseHyperModel
     from sqlalchemy.orm import Mapped
     from sqlalchemy.sql.functions import Function
+
+    from ...models.base import BaseHyperModel
 
 
 def approximate_row_count(model: "type[BaseHyperModel]") -> "Function[int]":
@@ -19,10 +22,14 @@ def approximate_row_count(model: "type[BaseHyperModel]") -> "Function[int]":
 
 
 def time_bucket(
-    width, column: "Mapped", timezone=None, origin=None, offset=None
+    width: str,
+    column: "Mapped[Any]",
+    timezone: datetime | None = None,
+    origin: str | None = None,
+    offset: str | None = None,
 ) -> "Function[datetime]":
     bucket_width = text(f"'{width}'::INTERVAL")
-    args = [bucket_width, column]
+    args: list[Any] = [bucket_width, column]
     if timezone:
         args.append(timezone)
     if origin:

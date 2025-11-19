@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 import uuid
 from typing import Annotated
 
@@ -11,7 +12,7 @@ from .base import BaseHyperModel
 
 
 class Event(BaseHyperModel, table=True):
-    __tablename__ = "events"  # type: ignore
+    __tablename__ = "events"  # type: ignore[assignment]
 
     page: Page = Field(sa_type=TEXT)
     agent: Annotated[str, StringConstraints(min_length=10)] = Field(sa_type=TEXT)

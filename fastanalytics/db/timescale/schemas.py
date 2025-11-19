@@ -1,13 +1,11 @@
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_snake
 
-_config = ConfigDict(extra="allow", alias_generator=to_snake)
 
-
-class HyperParams(BaseModel, extra="forbid"):
+class HyperParams(BaseModel):
     """Parameter required by our API to create a hypertable"""
 
-    model_config = _config
+    model_config = ConfigDict(alias_generator=to_snake, extra="forbid")
 
     table_name: str
     time_column: str
@@ -21,7 +19,7 @@ class HyperTableSchema(BaseModel):
 
     # Allow extra filed in case of new API interface changes
     # so it does not broke the application and can be fixed later
-    model_config = _config
+    model_config = ConfigDict(extra="allow", alias_generator=to_snake)
 
     hypertable_schema: str
     hypertable_name: str

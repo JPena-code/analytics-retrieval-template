@@ -36,7 +36,7 @@ class _Envelope(Base, arbitrary_types_allowed=True, validate_by_name=True):
     status: _ExcludedStatus
     message: _ExcludedMessage
     # TODO: Define an schema of error details to return to clients
-    errors: list[dict] | None = None
+    errors: list[dict[str, str]] | None = None
 
 
 class Response(_Envelope, Generic[_TModel]):
@@ -45,7 +45,7 @@ class Response(_Envelope, Generic[_TModel]):
     result: _TModel | None = None
 
     @model_validator(mode="after")
-    def validate_meta(self):
+    def validate_meta(self) -> "Response[_TModel]":
         self.metadata = MetaData(status=self.status, message=self.message)
         return self
 
@@ -58,7 +58,7 @@ class ResponsePage(_Envelope, Generic[_TModel]):
     page: Annotated[Page, Field(exclude=True)]
 
     @model_validator(mode="after")
-    def validate_meta(self):
+    def validate_meta(self) -> "ResponsePage[_TModel]":
         total_pages = (self.total_records // self.page.page_size) + (
             1 if self.total_records % self.page.page_size > 0 else 0
         )

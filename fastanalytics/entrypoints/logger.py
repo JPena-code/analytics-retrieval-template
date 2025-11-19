@@ -2,7 +2,7 @@ import json
 import logging
 import logging.config
 from datetime import datetime, timezone
-from typing import Literal
+from typing import Any, Literal
 
 from typing_extensions import override
 
@@ -105,7 +105,7 @@ class JsonFormatter(logging.Formatter):
         dict_record = self.__prepare_record(record)
         return json.dumps(dict_record, default=str)
 
-    def __prepare_record(self, record: logging.LogRecord) -> dict:
+    def __prepare_record(self, record: logging.LogRecord) -> dict[Any, Any]:
         _record = record.__dict__
         created = datetime.fromtimestamp(record.created, timezone.utc)
         dict_record = {
@@ -133,13 +133,13 @@ class JsonFormatter(logging.Formatter):
         return dict_record
 
 
-def init_loggers():
+def init_loggers() -> None:
     logging.config.dictConfig(LOGGING_CONFIG)
     for logger in logging.root.manager.loggerDict:
         logging.getLogger(logger).setLevel(logging.DEBUG if environments.debug else logging.INFO)
 
 
-def get_logger():
+def get_logger() -> logging.Logger:
     if environments.debug:
         return logging.getLogger(_DEBUG_LOGGER)
     return logging.getLogger(_LOGGER_NAME)
